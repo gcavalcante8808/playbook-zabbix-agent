@@ -1,0 +1,5 @@
+---
+ - hosts: "all"
+   zbx_server: "{{ server }}"
+   roles:
+    - { role: roles/zabbix-agent }

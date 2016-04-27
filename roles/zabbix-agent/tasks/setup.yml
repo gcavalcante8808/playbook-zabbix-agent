@@ -1,0 +1,39 @@
+--- 
+ - name: Verify if Zabbix Agent Exists
+   stat: path=/usr/sbin/zabbix_agentd
+   register: zbx_agent
+
+ - name: RHEL: Install Zabbix Repo
+   package: name="http://repo.zabbix.com/zabbix/2.4/rhel/7/x86_64/zabbix-release-2.4-1.el7.noarch.rpm state=present"
+   become: yes
+   when: ansible_os_family == 'Redhat' and zbx_agent.stat.exists == False
+
+ - name: Debian: Download Zabbix Repo
+   get_url: url=http://repo.zabbix.com/zabbix/2.4/ubuntu/pool/main/z/zabbix-release/zabbix-release_2.4-1+trusty_all.deb dest=/tmp/zabbix_release.deb dest=/tmp/zbx.deb
+   when: ansible_os_family == 'Debian' and zbx_agent.stat.exists == False
+
+ - name: Debian: Install Zabbix Repo
+   package: deb="/tmp/zbx.deb"
+   become: yes
+   when: ansible_os_family == 'Debian' and zbx_agent.stat.exists == False
+
+ - name: Create additional conf dir
+   file: path=/etc/zabbix/zabbix_agentd.conf.d state=directory owner=zabbix
+   become: yes
+
+ - name: Install Zabbix Packages
+   package: name={{ item }} state=present
+   with_items:
+    - zabbix-agent
+    - zabbix-sender
+   become: yes
+
+ - name: Configure Zabbix Agent
+   template: src=zabbix_agentd.conf.j2 dest=/etc/zabbix/zabbix_agentd.conf
+   become: yes
+
+ - name: Verify Service State
+   service: name={{ item }} state=restarted enabled=True
+   with_items:
+    - zabbix-agent
+    - zabbix-sender
