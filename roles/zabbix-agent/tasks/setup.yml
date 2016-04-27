@@ -13,7 +13,7 @@
    when: ansible_os_family == 'Debian' and zbx_agent.stat.exists == False
 
  - name: Debian: Install Zabbix Repo
-   package: deb="/tmp/zbx.deb"
+   apt: deb="/tmp/zbx.deb"
    become: yes
    when: ansible_os_family == 'Debian' and zbx_agent.stat.exists == False
 
