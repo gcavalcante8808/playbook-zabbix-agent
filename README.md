@@ -3,8 +3,8 @@ Ansible-zabbix-agent
 
 This is an gcavalcante8808/ansible-zabbix-agent repository with an Ansible Playbook.
 
-Simples Usage
--------------
+Simple Usage
+------------
 
 Clone this repo into your server, access the folder created, create your hosts file and use the ansible-playbook to run it:
 
